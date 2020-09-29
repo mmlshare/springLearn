@@ -19,12 +19,18 @@ package org.springframework.core.env;
 import java.util.Map;
 
 /**
+ * 提供设置激活和默认的配置并且能操纵底层配置
+ * 允许客户端设置和验证必要的配置项，还可定制配置转换方法
+ *
  * Configuration interface to be implemented by most if not all {@link Environment} types.
  * Provides facilities for setting active and default profiles and manipulating underlying
  * property sources. Allows clients to set and validate required properties, customize the
  * conversion service and more through the {@link ConfigurablePropertyResolver}
  * superinterface.
  *
+ * 操纵配置源
+ *
+ * 配置源可能会被移除，重排序或者通过 MutablePropertySources 的getPropertySources()方法添加
  * <h2>Manipulating property sources</h2>
  * <p>Property sources may be removed, reordered, or replaced; and additional
  * property sources may be added using the {@link MutablePropertySources}
