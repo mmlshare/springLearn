@@ -51,20 +51,40 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 	/** Logger available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	/**
+	 * 需要注册bean定义信息的对象
+	 */
 	private final BeanDefinitionRegistry registry;
 
+	/**
+	 * 加载bean定义信息配置的对象
+	 */
 	@Nullable
 	private ResourceLoader resourceLoader;
 
+	/**
+	 * 用于加载bean Class的类加载器
+	 */
 	@Nullable
 	private ClassLoader beanClassLoader;
-
+	/**
+	 * 应用环境对象
+	 */
 	private Environment environment;
-
+	/**
+	 * bean名称生成器
+	 */
 	private BeanNameGenerator beanNameGenerator = DefaultBeanNameGenerator.INSTANCE;
 
 
 	/**
+	 * 创建一个BeanDefinitionReader通过给定的beanFactory
+	 * 如果beanFactory不光继承了BeanDefinitionRegistry还继承了ResourceLoader，那么它将被用作加载bean定义配置文件。
+	 * 否则将使用PathMatchingResourcePatternResolver来作为ResourceLoader
+	 *
+	 * 如果beanFactory实现了EnvironmentCapable，它的环境变量将存放在environment中
+	 * 否则使用StandardEnvironment
+	 *
 	 * Create a new AbstractBeanDefinitionReader for the given bean factory.
 	 * <p>If the passed-in bean factory does not only implement the BeanDefinitionRegistry
 	 * interface but also the ResourceLoader interface, it will be used as default
@@ -122,6 +142,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 	 * is not available for this bean definition reader.
 	 * @see org.springframework.core.io.support.ResourcePatternResolver
 	 * @see org.springframework.core.io.support.PathMatchingResourcePatternResolver
+	 * 设置 bean定义信息资源加载器
 	 */
 	public void setResourceLoader(@Nullable ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
@@ -139,6 +160,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 	 * eagerly but rather to just register bean definitions with class names,
 	 * with the corresponding Classes to be resolved later (or never).
 	 * @see Thread#getContextClassLoader()
+	 * 设置bean Class类加载器
 	 */
 	public void setBeanClassLoader(@Nullable ClassLoader beanClassLoader) {
 		this.beanClassLoader = beanClassLoader;
@@ -154,6 +176,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 	 * Set the Environment to use when reading bean definitions. Most often used
 	 * for evaluating profile information to determine which bean definitions
 	 * should be read and which should be omitted.
+	 * 设置环境对象
 	 */
 	public void setEnvironment(Environment environment) {
 		Assert.notNull(environment, "Environment must not be null");
@@ -169,6 +192,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 	 * Set the BeanNameGenerator to use for anonymous beans
 	 * (without explicit bean name specified).
 	 * <p>Default is a {@link DefaultBeanNameGenerator}.
+	 * 设置Bean名称生成器
 	 */
 	public void setBeanNameGenerator(@Nullable BeanNameGenerator beanNameGenerator) {
 		this.beanNameGenerator = (beanNameGenerator != null ? beanNameGenerator : DefaultBeanNameGenerator.INSTANCE);
@@ -179,7 +203,9 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		return this.beanNameGenerator;
 	}
 
-
+	/**
+	 * 加载多个bean定义信息资源文件
+	 */
 	@Override
 	public int loadBeanDefinitions(Resource... resources) throws BeanDefinitionStoreException {
 		Assert.notNull(resources, "Resource array must not be null");
@@ -190,6 +216,9 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		return count;
 	}
 
+	/**
+	 * 加载指定路径的资源文件
+	 */
 	@Override
 	public int loadBeanDefinitions(String location) throws BeanDefinitionStoreException {
 		return loadBeanDefinitions(location, null);
@@ -209,6 +238,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 	 * @see #getResourceLoader()
 	 * @see #loadBeanDefinitions(org.springframework.core.io.Resource)
 	 * @see #loadBeanDefinitions(org.springframework.core.io.Resource[])
+	 * 加载特定路径下的资源文件
 	 */
 	public int loadBeanDefinitions(String location, @Nullable Set<Resource> actualResources) throws BeanDefinitionStoreException {
 		ResourceLoader resourceLoader = getResourceLoader();
@@ -237,6 +267,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		}
 		else {
 			// Can only load single resources by absolute URL.
+			//通过绝对路径 加载单个资源
 			Resource resource = resourceLoader.getResource(location);
 			int count = loadBeanDefinitions(resource);
 			if (actualResources != null) {
@@ -249,6 +280,9 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		}
 	}
 
+	/**
+	 *  加载多个特定路径下的文件
+	 */
 	@Override
 	public int loadBeanDefinitions(String... locations) throws BeanDefinitionStoreException {
 		Assert.notNull(locations, "Location array must not be null");

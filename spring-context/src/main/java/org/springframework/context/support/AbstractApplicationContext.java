@@ -227,6 +227,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Create a new AbstractApplicationContext with no parent.
 	 */
 	public AbstractApplicationContext() {
+		// 设置 资源解析类
 		this.resourcePatternResolver = getResourcePatternResolver();
 	}
 
@@ -235,7 +236,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @param parent the parent context
 	 */
 	public AbstractApplicationContext(@Nullable ApplicationContext parent) {
+		// 调用无参构造函数
 		this();
+		//  设置父容器
 		setParent(parent);
 	}
 
@@ -444,6 +447,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	}
 
 	/**
+	 * 返回资源解析器来将路径解析成Resource实例 例如： classPath:xxx.xml
+	 * 默认实例是 PathMatchingResourcePatternResolver
 	 * Return the ResourcePatternResolver to use for resolving location patterns
 	 * into Resource instances. Default is a
 	 * {@link org.springframework.core.io.support.PathMatchingResourcePatternResolver},
@@ -458,6 +463,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see org.springframework.core.io.support.PathMatchingResourcePatternResolver
 	 */
 	protected ResourcePatternResolver getResourcePatternResolver() {
+		// 返回资源解析器来将路径解析成Resource实例 例如： classPath:xxx.xml
 		return new PathMatchingResourcePatternResolver(this);
 	}
 
@@ -519,54 +525,53 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
-			/**
-			 * 容器 刷新前准备
-			 * 创建环境变量
-			 * 设置应用前置监听器
-			 * 
- 			 */
+			// 1. 容器刷新前准备：如果没有创建环境实例则创建一个实例、设置应用前置监听器。
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
-			// 创建 bean factory
+			// 2. 创建 beanFactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
-			//对 beanFactory 进行初始化（将容器的属性放入beanFactory）
+			// 3. 对 beanFactory 进行初始化（将容器的属性放入beanFactory）
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
-				// beanFactory的后置处理方法，默认为空方法
+				// 4. beanFactory的后置处理方法，默认为空方法
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
 
-				//调用bean工厂处理器
+				// 5. 调用bean工厂后置处理器
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
-				// 注册bean处理器
+				// 6.注册bean处理器
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				// 7.国际化
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				// 8.初始化广播器
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
-				// 初始化其他的 bean 空方法
+				// 9.初始化其他的 bean 空方法
 				onRefresh();
 
 				// Check for listener beans and register them.
+				// 10.注册监听器
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
-				//实例化单例
+				// 11.实例化单例
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				// 12.容器创建完毕，执行最后的清理工作
 				finishRefresh();
 			}
 
@@ -606,7 +611,6 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		this.closed.set(false);
 		// 设置 激活标识
 		this.active.set(true);
-
 		if (logger.isDebugEnabled()) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("Refreshing " + this);
@@ -622,7 +626,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
-		//创建 environment 验证所有必须的配置是否都存在
+		// 验证所有必须的配置是否都存在
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...
@@ -638,6 +642,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Allow for the collection of early ApplicationEvents,
 		// to be published once the multicaster is available...
+		// 存放早期的应用事件，在事件广播器创建完毕后将事件发布
 		this.earlyApplicationEvents = new LinkedHashSet<>();
 	}
 

@@ -182,6 +182,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			}
 		}
 		else {
+			// 客户化 xml解析器
 			delegate.parseCustomElement(root);
 		}
 	}
