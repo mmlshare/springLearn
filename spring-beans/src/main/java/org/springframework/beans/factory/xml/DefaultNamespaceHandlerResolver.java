@@ -51,6 +51,7 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 
 	/**
 	 * The location to look for the mapping files. Can be present in multiple JAR files.
+	 * 命名空间解析器 默认的搜索路径
 	 */
 	public static final String DEFAULT_HANDLER_MAPPINGS_LOCATION = "META-INF/spring.handlers";
 
@@ -65,7 +66,10 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 	/** Resource location to search for. */
 	private final String handlerMappingsLocation;
 
-	/** Stores the mappings from namespace URI to NamespaceHandler class name / instance. */
+	/** Stores the mappings from namespace URI to NamespaceHandler class name / instance.
+	 *
+	 * 存储命名空间解析器
+	 */
 	@Nullable
 	private volatile Map<String, Object> handlerMappings;
 
@@ -115,15 +119,20 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 	@Override
 	@Nullable
 	public NamespaceHandler resolve(String namespaceUri) {
+		// 获取 命名空间处理器 map
 		Map<String, Object> handlerMappings = getHandlerMappings();
+		// 获取处理器className
 		Object handlerOrClassName = handlerMappings.get(namespaceUri);
 		if (handlerOrClassName == null) {
 			return null;
 		}
+
 		else if (handlerOrClassName instanceof NamespaceHandler) {
+			// 如果已经是一个实例则返回
 			return (NamespaceHandler) handlerOrClassName;
 		}
 		else {
+			// 否则通过反射生成生成对应的对象
 			String className = (String) handlerOrClassName;
 			try {
 				Class<?> handlerClass = ClassUtils.forName(className, this.classLoader);
@@ -160,6 +169,7 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 						logger.trace("Loading NamespaceHandler mappings from [" + this.handlerMappingsLocation + "]");
 					}
 					try {
+						// 加载 路径下的配置
 						Properties mappings =
 								PropertiesLoaderUtils.loadAllProperties(this.handlerMappingsLocation, this.classLoader);
 						if (logger.isTraceEnabled()) {
