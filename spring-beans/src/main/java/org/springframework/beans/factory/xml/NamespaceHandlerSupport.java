@@ -36,6 +36,11 @@ import org.springframework.lang.Nullable;
  * methods for registering a {@link BeanDefinitionParser} or {@link BeanDefinitionDecorator}
  * to handle a specific element.
  *
+ * 为自定义 命名空间处理器提供支持
+ * 通过策略模式对节点进行解析和装饰
+ *
+ * 提供 registerBeanDefinitionParser 和 registerBeanDefinitionDecorator 来处理特定的元素
+ *
  * @author Rob Harrop
  * @author Juergen Hoeller
  * @since 2.0
@@ -47,18 +52,21 @@ public abstract class NamespaceHandlerSupport implements NamespaceHandler {
 	/**
 	 * Stores the {@link BeanDefinitionParser} implementations keyed by the
 	 * local name of the {@link Element Elements} they handle.
+	 * 保存 标签解析器
 	 */
 	private final Map<String, BeanDefinitionParser> parsers = new HashMap<>();
 
 	/**
 	 * Stores the {@link BeanDefinitionDecorator} implementations keyed by the
 	 * local name of the {@link Element Elements} they handle.
+	 * 保存 标签装饰器
 	 */
 	private final Map<String, BeanDefinitionDecorator> decorators = new HashMap<>();
 
 	/**
 	 * Stores the {@link BeanDefinitionDecorator} implementations keyed by the local
 	 * name of the {@link Attr Attrs} they handle.
+	 * 保存 属性 装饰器
 	 */
 	private final Map<String, BeanDefinitionDecorator> attributeDecorators = new HashMap<>();
 
@@ -66,6 +74,8 @@ public abstract class NamespaceHandlerSupport implements NamespaceHandler {
 	/**
 	 * Parses the supplied {@link Element} by delegating to the {@link BeanDefinitionParser} that is
 	 * registered for that {@link Element}.
+	 * 委派给已经注册的解析器，对元素进行解析
+	 *
 	 */
 	@Override
 	@Nullable
@@ -80,7 +90,9 @@ public abstract class NamespaceHandlerSupport implements NamespaceHandler {
 	 */
 	@Nullable
 	private BeanDefinitionParser findParserForElement(Element element, ParserContext parserContext) {
+		// 获取节点名称
 		String localName = parserContext.getDelegate().getLocalName(element);
+		// 获取解析器
 		BeanDefinitionParser parser = this.parsers.get(localName);
 		if (parser == null) {
 			parserContext.getReaderContext().fatal(

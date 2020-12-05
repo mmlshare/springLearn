@@ -141,6 +141,7 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 							"] does not implement the [" + NamespaceHandler.class.getName() + "] interface");
 				}
 				NamespaceHandler namespaceHandler = (NamespaceHandler) BeanUtils.instantiateClass(handlerClass);
+				// 执行命名空间处理器 初始化方法
 				namespaceHandler.init();
 				handlerMappings.put(namespaceUri, namespaceHandler);
 				return namespaceHandler;

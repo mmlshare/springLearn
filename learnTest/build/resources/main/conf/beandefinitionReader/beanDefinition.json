@@ -1,0 +1,14 @@
+[
+  {
+    "name":"testBean",
+    "clazz": "com.test.learn.beanDefinitionReader.BeanDefinitionTestObj",
+    "properties": {
+      "name": {
+        "value": "张三"
+      },
+      "age": {
+        "value": "18"
+      }
+    }
+  }
+]

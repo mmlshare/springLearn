@@ -84,7 +84,9 @@ import org.springframework.util.xml.DomUtils;
  * @see DefaultBeanDefinitionDocumentReader
  */
 public class BeanDefinitionParserDelegate {
-
+	/**
+	 * spring 默认的namespce uri
+ 	 */
 	public static final String BEANS_NAMESPACE_URI = "http://www.springframework.org/schema/beans";
 
 	public static final String MULTI_VALUE_ATTRIBUTE_DELIMITERS = ",; ";
@@ -514,18 +516,23 @@ public class BeanDefinitionParserDelegate {
 
 		try {
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
-
+			// 给BeanDefinition设置默认值
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
+			// 设置 描述信息
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
-
+			// 解析 meta
 			parseMetaElements(ele, bd);
+			// 解析 lookup属性
 			parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
+			// 解析 replace属性
 			parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
-
+			// 解析 构造
 			parseConstructorArgElements(ele, bd);
+			// 解析property
 			parsePropertyElements(ele, bd);
+			// 解析 qualified
 			parseQualifierElements(ele, bd);
-
+			// 设置 resource
 			bd.setResource(this.readerContext.getResource());
 			bd.setSource(extractSource(ele));
 
@@ -1415,6 +1422,7 @@ public class BeanDefinitionParserDelegate {
 		BeanDefinitionHolder finalDefinition = originalDef;
 
 		// Decorate based on custom attributes first.
+		// 先解析外层 自定义属性
 		NamedNodeMap attributes = ele.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node node = attributes.item(i);
@@ -1422,6 +1430,7 @@ public class BeanDefinitionParserDelegate {
 		}
 
 		// Decorate based on custom nested elements.
+		// 递归解析内嵌的 元素属性
 		NodeList children = ele.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node node = children.item(i);
@@ -1435,6 +1444,7 @@ public class BeanDefinitionParserDelegate {
 	/**
 	 * Decorate the given bean definition through a namespace handler,
 	 * if applicable.
+	 *  使用装饰器装饰
 	 * @param node the current child node
 	 * @param originalDef the current bean definition
 	 * @param containingBd the containing bean definition (if any)
@@ -1445,8 +1455,10 @@ public class BeanDefinitionParserDelegate {
 
 		String namespaceUri = getNamespaceURI(node);
 		if (namespaceUri != null && !isDefaultNamespace(namespaceUri)) {
+			// 获取自定义命名空间解析器
 			NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri);
 			if (handler != null) {
+				// 对beanDefinition进行装饰
 				BeanDefinitionHolder decorated =
 						handler.decorate(node, originalDef, new ParserContext(this.readerContext, this, containingBd));
 				if (decorated != null) {
@@ -1529,6 +1541,7 @@ public class BeanDefinitionParserDelegate {
 
 	/**
 	 * Determine whether the given node indicates the default namespace.
+	 * 检查是否属于 spring默认的命名空间
 	 */
 	public boolean isDefaultNamespace(Node node) {
 		return isDefaultNamespace(getNamespaceURI(node));

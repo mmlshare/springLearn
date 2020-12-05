@@ -31,6 +31,7 @@ import org.springframework.util.ObjectUtils;
  * Base class for message source implementations, providing support infrastructure
  * such as {@link java.text.MessageFormat} handling but not implementing concrete
  * methods defined in the {@link org.springframework.context.MessageSource}.
+ * 提供消息源的基础架构，但不提供MessageSource的实现
  *
  * <p>{@link AbstractMessageSource} derives from this class, providing concrete
  * {@code getMessage} implementations that delegate to a central template
@@ -52,6 +53,7 @@ public abstract class MessageSourceSupport {
 	 * Cache to hold already generated MessageFormats per message.
 	 * Used for passed-in default messages. MessageFormats for resolved
 	 * codes are cached on a specific basis in subclasses.
+	 * 给每个消息设置一个缓存
 	 */
 	private final Map<String, Map<Locale, MessageFormat>> messageFormatsPerMessage = new HashMap<>();
 
@@ -117,6 +119,7 @@ public abstract class MessageSourceSupport {
 		}
 		MessageFormat messageFormat = null;
 		synchronized (this.messageFormatsPerMessage) {
+			// 获取消息格式化器
 			Map<Locale, MessageFormat> messageFormatsPerLocale = this.messageFormatsPerMessage.get(msg);
 			if (messageFormatsPerLocale != null) {
 				messageFormat = messageFormatsPerLocale.get(locale);

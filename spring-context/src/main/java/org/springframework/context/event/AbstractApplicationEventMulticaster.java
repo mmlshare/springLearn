@@ -44,10 +44,13 @@ import org.springframework.util.ObjectUtils;
  * Abstract implementation of the {@link ApplicationEventMulticaster} interface,
  * providing the basic listener registration facility.
  *
+ * ApplicationEventMulticaster的基础实现实现，提供监听器的注册功能
+ *
  * <p>Doesn't permit multiple instances of the same listener by default,
  * as it keeps listeners in a linked Set. The collection class used to hold
  * ApplicationListener objects can be overridden through the "collectionClass"
  * bean property.
+ * 默认情况下 不允许同一监听器存在多个实例
  *
  * <p>Implementing ApplicationEventMulticaster's actual {@link #multicastEvent} method
  * is left to subclasses. {@link SimpleApplicationEventMulticaster} simply multicasts

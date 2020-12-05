@@ -30,16 +30,19 @@ import org.springframework.util.ErrorHandler;
 
 /**
  * Simple implementation of the {@link ApplicationEventMulticaster} interface.
+ * 对ApplicationEventMulticaster的简单实现
  *
  * <p>Multicasts all events to all registered listeners, leaving it up to
  * the listeners to ignore events that they are not interested in.
  * Listeners will usually perform corresponding {@code instanceof}
  * checks on the passed-in event object.
+ * 将事件广播到所有注册的监听者，让他们忽略不感兴趣的事件。
  *
  * <p>By default, all listeners are invoked in the calling thread.
  * This allows the danger of a rogue listener blocking the entire application,
  * but adds minimal overhead. Specify an alternative task executor to have
  * listeners executed in different threads, for example from a thread pool.
+ * 监听器将在不同线程上执行，防止流氓监听器阻塞线程
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
