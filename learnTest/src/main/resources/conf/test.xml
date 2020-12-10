@@ -12,5 +12,8 @@
     <alias name="testObj" alias="testObj2"/>
 
 
+    <bean name="MyBeanPostProcessor" class="com.test.learn.beanPostProcessor.MyBeanPostProcessor"/>
+
+
 
 </beans>
