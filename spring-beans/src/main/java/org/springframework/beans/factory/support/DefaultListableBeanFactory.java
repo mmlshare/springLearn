@@ -886,7 +886,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 
 				if (isFactoryBean(beanName)) {
-					// bean是FactoryBean
+					// bean是FactoryBean 给bean名称加上工厂bean前缀& 并开始创建工厂bean
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
 						// 重新检查获取到bean是工厂bean
@@ -903,11 +903,13 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 									((SmartFactoryBean<?>) factory).isEagerInit());
 						}
 						if (isEagerInit) {
+							// 真正创建bean
 							getBean(beanName);
 						}
 					}
 				}
 				else {
+					// 直接创建 bean
 					getBean(beanName);
 				}
 			}

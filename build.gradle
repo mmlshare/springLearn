@@ -412,4 +412,6 @@ configure(rootProject) {
 			}
 		}
 	}
+
 }
+

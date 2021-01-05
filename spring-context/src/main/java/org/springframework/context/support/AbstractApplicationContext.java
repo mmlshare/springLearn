@@ -904,11 +904,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
 		// Initialize conversion service for this context.
+		// 初始化容器中的ConversionService 注册名称为：conversionService
 		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
 				beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
 			beanFactory.setConversionService(
 					beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class));
 		}
+
+		// 2.添加内置的占位符解析器（如果容器中不存在的话）
 
 		// Register a default embedded value resolver if no bean post-processor
 		// (such as a PropertyPlaceholderConfigurer bean) registered any before:
@@ -916,11 +919,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// 注册一个默认的内嵌的值处理器
 		// 判断是否存在标签值${..}解析器 主要是对自动注入的属性进行解析
 		if (!beanFactory.hasEmbeddedValueResolver()) {
+			// 添加环境中的值处理器 PropertySourcesPropertyResolver
 			beanFactory.addEmbeddedValueResolver(strVal -> getEnvironment().resolvePlaceholders(strVal));
 		}
 
 		// Initialize LoadTimeWeaverAware beans early to allow for registering their transformers early.
-		// 尽早初始化LoadTimeWeaverAware Bean，以便尽早注册其转换器。
+		// 尽早初始化LoadTimeWeaverAware Bean，以便尽早注册其转换器。和aop切面有关
 		String[] weaverAwareNames = beanFactory.getBeanNamesForType(LoadTimeWeaverAware.class, false, false);
 		for (String weaverAwareName : weaverAwareNames) {
 			getBean(weaverAwareName);

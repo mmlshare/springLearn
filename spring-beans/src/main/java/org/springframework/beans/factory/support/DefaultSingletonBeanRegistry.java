@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanCreationNotAllowedException;
 import org.springframework.beans.factory.BeanCurrentlyInCreationException;
@@ -69,6 +71,7 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.beans.factory.config.ConfigurableBeanFactory
  */
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	/** Maximum number of suppressed exceptions to preserve. */
 	private static final int SUPPRESSED_EXCEPTIONS_LIMIT = 100;
@@ -160,6 +163,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param singletonObject the singleton object
 	 */
 	protected void addSingleton(String beanName, Object singletonObject) {
+		System.out.println("[三级缓存] 添加一级缓存:["+beanName+"]bean["+singletonObject+"]");
 		synchronized (this.singletonObjects) {
 			// 放入一级缓存
 			this.singletonObjects.put(beanName, singletonObject);
@@ -182,7 +186,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param singletonFactory the factory for the singleton object
 	 */
 	protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
-
+		System.out.println("[三级缓存] 添加三级缓存["+beanName+"] singletonFactory["+singletonFactory+"]");
 		Assert.notNull(singletonFactory, "Singleton factory must not be null");
 		synchronized (this.singletonObjects) {
 			if (!this.singletonObjects.containsKey(beanName)) {
@@ -237,6 +241,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 								// 使用singletonFactory创建出早期bean
 								singletonObject = singletonFactory.getObject();
 								// 放入二级缓存中
+								System.out.println("[三级缓存] 添加二级缓存["+beanName+"]bean["+singletonObject+"]");
 								this.earlySingletonObjects.put(beanName, singletonObject);
 								// 把bean从三级缓存中的移除
 								this.singletonFactories.remove(beanName);
